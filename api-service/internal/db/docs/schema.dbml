@@ -1,0 +1,40 @@
+Enum status {
+  QUEUE
+  PROGRESS
+  READY
+  FAIL
+}
+
+Table "user" {
+  id serial [primary key]
+  github_url int [not null]
+  name varchar
+  username varchar [not null]
+  email  varchar [unique, not null]
+  avatar varchar [not null, default: '']
+}
+
+
+TABLE "refresh_token" {
+  "id" uuid [PRIMARY KEY]
+  "token" varchar [NOT NULL]
+  "user_id" int [NOT NULL, ref: > user.id]
+  "expiry" timestamptz [NOT NULL, DEFAULT: 'now()']
+}
+
+Table "projects" {
+  id bigserial [primary key]
+  created_by int [ref: > user.id]
+  name varchar [not null]
+  github_url varchar [not null]
+  subdomain varchar
+  custom_domain varchar
+  created_at timestamptz [NOT NULL, DEFAULT: 'now()']
+}
+
+
+Table "deployments" {
+  id bigserial [primary key]
+  project_id bigint [ref: > projects.id]
+  status status [default: 'QUEUE']
+}
