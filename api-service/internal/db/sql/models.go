@@ -12,54 +12,54 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Status string
+type DeploymentStatus string
 
 const (
-	StatusQUEUE    Status = "QUEUE"
-	StatusPROGRESS Status = "PROGRESS"
-	StatusREADY    Status = "READY"
-	StatusFAIL     Status = "FAIL"
+	DeploymentStatusQUEUE    DeploymentStatus = "QUEUE"
+	DeploymentStatusPROGRESS DeploymentStatus = "PROGRESS"
+	DeploymentStatusREADY    DeploymentStatus = "READY"
+	DeploymentStatusFAIL     DeploymentStatus = "FAIL"
 )
 
-func (e *Status) Scan(src interface{}) error {
+func (e *DeploymentStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = Status(s)
+		*e = DeploymentStatus(s)
 	case string:
-		*e = Status(s)
+		*e = DeploymentStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for Status: %T", src)
+		return fmt.Errorf("unsupported scan type for DeploymentStatus: %T", src)
 	}
 	return nil
 }
 
-type NullStatus struct {
-	Status Status `json:"status"`
-	Valid  bool   `json:"valid"` // Valid is true if Status is not NULL
+type NullDeploymentStatus struct {
+	DeploymentStatus DeploymentStatus `json:"deployment_status"`
+	Valid            bool             `json:"valid"` // Valid is true if DeploymentStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullStatus) Scan(value interface{}) error {
+func (ns *NullDeploymentStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.Status, ns.Valid = "", false
+		ns.DeploymentStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.Status.Scan(value)
+	return ns.DeploymentStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullStatus) Value() (driver.Value, error) {
+func (ns NullDeploymentStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.Status), nil
+	return string(ns.DeploymentStatus), nil
 }
 
 type Deployment struct {
-	ID        int64       `json:"id"`
-	ProjectID pgtype.Int8 `json:"project_id"`
-	Status    NullStatus  `json:"status"`
+	ID        int64            `json:"id"`
+	ProjectID pgtype.Int8      `json:"project_id"`
+	Status    DeploymentStatus `json:"status"`
 }
 
 type Project struct {

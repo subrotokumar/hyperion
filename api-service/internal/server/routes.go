@@ -4,16 +4,20 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := s.server
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(httprate.LimitByIP(100, 1*time.Minute))
 
-	r.Get("/health", s.HelloWorldHandler)
+	r.Get("/health", s.healthHandler)
 
 	//* Auth Routes
 	r.Get("/auth/{provider}/callback", s.getAuthProviderCallback)
@@ -22,7 +26,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/auth/providers", s.getProviderList)
 
 	//* Project
-	r.Route("/project", func(r chi.Router) {
+	r.With(AuthMiddleware).Route("/project", func(r chi.Router) {
 		r.Get("/deploy", s.deploy)
 	})
 
@@ -34,11 +38,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
-func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	resp := map[string]string{
 		"message": "Server is running 🚀",
 	}
-
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)

@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"hyperion/internal/utility"
+	"hyperion/internal/utility/env"
 
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
@@ -15,7 +15,7 @@ const (
 )
 
 func NewAuth() {
-	store := sessions.NewCookieStore([]byte(utility.Env.SessionKey))
+	store := sessions.NewCookieStore([]byte(env.Env.SessionKey))
 	store.MaxAge(MaxAge)
 
 	store.Options.Path = "/"
@@ -23,6 +23,6 @@ func NewAuth() {
 	store.Options.Secure = IsProd
 	gothic.Store = store
 	goth.UseProviders(
-		github.New(utility.Env.GithubKey, utility.Env.GithubSecret, "http://localhost:8080/auth/github/callback"),
+		github.New(env.Env.GithubKey, env.Env.GithubSecret, "http://localhost:8080/auth/github/callback"),
 	)
 }

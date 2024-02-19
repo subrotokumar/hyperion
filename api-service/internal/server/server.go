@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	db "hyperion/internal/db/sql"
-	"hyperion/internal/utility"
+	"hyperion/internal/utility/env"
 	"log"
 	"net/http"
 	"os"
@@ -35,7 +35,7 @@ func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	chi := chi.NewRouter()
 
-	conn, err := pgxpool.New(context.Background(), utility.Env.DatabaseUrl)
+	conn, err := pgxpool.New(context.Background(), env.Env.DatabaseUrl)
 	if err != nil {
 		log.Fatalf("DB Error: %s", err.Error())
 	}

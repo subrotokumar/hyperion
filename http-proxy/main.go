@@ -21,7 +21,7 @@ func main() {
 }
 
 func handleRequestAndRedirect(res http.ResponseWriter, req *http.Request) {
-	basePath = os.Getenv("BASE_PATH")
+	basePath := os.Getenv("BASE_PATH")
 	subdomain := strings.Split(req.Host, ".")[0]
 	targetURL := basePath + "/" + subdomain + "/index.html"
 

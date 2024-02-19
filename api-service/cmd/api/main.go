@@ -4,13 +4,17 @@ import (
 	"fmt"
 	"hyperion/internal/auth"
 	"hyperion/internal/server"
-	"hyperion/internal/utility"
+	"hyperion/internal/utility/env"
+	"log"
 
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-	utility.LoadEnv()
+	if err := env.LoadEnv(".env"); err != nil {
+		log.Fatalf("Env: %v", err.Error())
+	}
+
 	auth.NewAuth()
 	server := server.NewServer()
 

@@ -18,4 +18,4 @@ DROP TABLE IF EXISTS "refresh_token";
 DROP TABLE IF EXISTS "user";
 
 -- Drop custom enum type
-DROP TYPE IF EXISTS "status";
+DROP TYPE IF EXISTS "deployment_status";

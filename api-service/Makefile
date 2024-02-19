@@ -1,5 +1,5 @@
 # Simple Makefile for a Go project
-DB=$DB_URL
+DB=${DB_URL}
 
 migrate-up:
 	@migrate -path internal/db/migration -database ${DB} -verbose up

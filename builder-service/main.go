@@ -40,6 +40,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+	println(string(output))
 
 	npmBuildCmd := exec.Command("npm", "run", "build")
 	output, err = npmBuildCmd.CombinedOutput()

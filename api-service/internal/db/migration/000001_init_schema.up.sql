@@ -1,4 +1,4 @@
-CREATE TYPE "status" AS ENUM ('QUEUE', 'PROGRESS', 'READY', 'FAIL');
+CREATE TYPE "deployment_status" AS ENUM ('QUEUE', 'PROGRESS', 'READY', 'FAIL');
 
 CREATE TABLE
     "user" (
@@ -33,7 +33,7 @@ CREATE TABLE
     "deployments" (
         "id" BIGSERIAL PRIMARY KEY,
         "project_id" BIGINT,
-        "status" status DEFAULT 'QUEUE'
+        "status" deployment_status NOT NULL DEFAULT 'QUEUE'
     );
 
 ALTER TABLE "refresh_token" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");

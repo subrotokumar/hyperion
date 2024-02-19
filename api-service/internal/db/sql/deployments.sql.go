@@ -18,8 +18,8 @@ VALUES ( $1, $2 ) RETURNING id, project_id, status
 `
 
 type CreateDeploymentParams struct {
-	ProjectID pgtype.Int8 `json:"project_id"`
-	Status    NullStatus  `json:"status"`
+	ProjectID pgtype.Int8      `json:"project_id"`
+	Status    DeploymentStatus `json:"status"`
 }
 
 func (q *Queries) CreateDeployment(ctx context.Context, arg CreateDeploymentParams) (Deployment, error) {

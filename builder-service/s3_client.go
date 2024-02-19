@@ -20,7 +20,7 @@ func initAWS() error {
 	sdkConfig, err := config.LoadDefaultConfig(context.TODO())
 
 	if err != nil {
-		return fmt.Errorf("Couldn't load default configuration. Have you set up your AWS account?")
+		return fmt.Errorf("couldn't load default configuration. Have you set up your AWS account?")
 	}
 	s3Client := s3.NewFromConfig(sdkConfig)
 	awsClient = &AWSClient{
