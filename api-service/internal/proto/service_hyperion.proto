@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+import "rpc_deploy_project.proto";
+
+option go_package = "hyperion/internal/pb";
+
+service Hyperion {
+    rpc DeployProject (DeployProjectRequest) returns (DeployProjectResponse) {}
+}

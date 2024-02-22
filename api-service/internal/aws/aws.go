@@ -11,11 +11,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 )
 
-type AwsClient struct {
+type Client struct {
 	Ecs *ecs.Client
 }
 
-var awsClient *AwsClient
+var AwsClient *Client
 
 func initAwsService() error {
 	sdkConfig, err := config.LoadDefaultConfig(context.TODO())
@@ -24,14 +24,14 @@ func initAwsService() error {
 		return fmt.Errorf("Couldn't load default configuration. Have you set up your AWS account?")
 	}
 	ecsClient := ecs.NewFromConfig(sdkConfig)
-	awsClient = &AwsClient{
+	AwsClient = &Client{
 		Ecs: ecsClient,
 	}
 	return nil
 
 }
 
-func (awsClient *AwsClient) RunTask(ctx context.Context, githubRepoUrl, projectId string) (*ecs.RunTaskOutput, error) {
+func (awsClient *Client) RunTask(ctx context.Context, githubRepoUrl, projectId string) (*ecs.RunTaskOutput, error) {
 	builderImage := os.Getenv("BUILDER_IMAGE")
 	taskDefination := os.Getenv("TASK_DEFINATION")
 	cluster := os.Getenv("CLUSTER")

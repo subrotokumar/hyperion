@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "hyperion/internal/pb";
+
+message DeployProjectRequest {
+    string created_by = 1;
+    string name = 2;
+    string github_url = 3;
+    string subdomain = 4;
+    google.protobuf.StringValue custom_domain = 5;
+}
+
+message DeployProjectResponse {
+    int64 id = 1;
+    string created_by = 2;
+    string name = 3;
+    string github_url = 4;
+    string subdomain = 5;
+    google.protobuf.Timestamp created_at = 6;
+}

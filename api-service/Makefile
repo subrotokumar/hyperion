@@ -7,6 +7,14 @@ migrate-up:
 migrate-down:
 	@migrate -path internal/db/migration -database "${DB}" -verbose down
 
+proto:
+	@protoc --proto_path=internal/proto --go_out=internal/pb --go_opt=paths=source_relative \
+    --go-grpc_out=internal/pb --go-grpc_opt=paths=source_relative \
+    internal/proto/*.proto
+
+evans:
+	@evans --host localhost --port 9090 -r repl
+
 # Build the application
 all: build
 

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "hyperion/internal/pb";
+
+message Project {
+    string created_by = 1;
+    string name = 2;
+    string github_url = 3;
+    string subdomain = 4;
+    google.protobuf.StringValue custom_domain = 5;
+    
+}
