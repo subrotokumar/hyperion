@@ -4,9 +4,9 @@ INSERT INTO "deployments"
 VALUES ( $1, $2 ) RETURNING *;
 
 
--- -- name: GetDeploymentById :one
--- SELECT * FROM "deployments"
--- WHERE "id" = $1;
+-- name: GetDeploymentByProjectId :one
+SELECT * FROM "deployments"
+WHERE "project_id" = $1;
 
 -- -- name: GetDeployments :many
 -- SELECT * FROM "deployments"

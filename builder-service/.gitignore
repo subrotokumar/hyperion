@@ -24,4 +24,4 @@ tmp/
 
 # .env file
 .env
-docker-compose.yaml
+*docker-compose.yaml

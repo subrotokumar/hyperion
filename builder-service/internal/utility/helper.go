@@ -1,17 +1,8 @@
-package main
+package utility
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"os"
-)
-
-var (
-	printf  = fmt.Printf
-	print   = fmt.Print
-	println = fmt.Println
-	panic   = log.Panic
 )
 
 func GetFileContentType(ouput *os.File) (string, error) {

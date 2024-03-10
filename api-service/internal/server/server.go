@@ -18,9 +18,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-var (
-	print = fmt.Println
-)
+var print = fmt.Println
 
 type (
 	Server struct {

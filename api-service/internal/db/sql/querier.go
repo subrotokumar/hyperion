@@ -17,6 +17,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteProjects(ctx context.Context, id int64) error
 	DeleteUser(ctx context.Context, id int32) error
+	GetDeploymentByProjectId(ctx context.Context, projectID pgtype.Int8) (Deployment, error)
 	GetProjectById(ctx context.Context, id int64) (Project, error)
 	GetProjects(ctx context.Context, createdBy pgtype.Int4) (Project, error)
 	GetUser(ctx context.Context, id int32) (User, error)

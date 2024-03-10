@@ -1,9 +1,17 @@
+# FROM golang:alpine AS UPLOADER
+# WORKDIR /app
+# COPY main.go .
+# COPY go.mod .
+# COPY go.sum .
+# RUN go build -o main main.go
+
 FROM golang:alpine AS UPLOADER
 WORKDIR /app
-COPY main.go .
+COPY cmd/ cmd/
+COPY internal/ internal/
 COPY go.mod .
 COPY go.sum .
-RUN go build -o main main.go
+RUN go build -o main cmd/main.go
 
 FROM ubuntu:focal
 

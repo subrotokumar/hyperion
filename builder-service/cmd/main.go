@@ -3,28 +3,33 @@ package main
 import (
 	"fmt"
 	"io/fs"
+	"log"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/joho/godotenv"
+	"github.com/subrotokumar/builder-service/internal/cloud"
 )
 
 func main() {
+	godotenv.Load()
 	bucketName := os.Getenv("BUCKET_NAME")
 	if bucketName == "" {
-		panic("Empty Bucket name")
+		log.Panic("Empty Bucket name")
 	}
 
 	projectId := os.Getenv("PROJECT_ID")
 	if projectId == "" {
-		panic("PROJECT_ID can't be empty")
+		log.Panic("PROJECT_ID can't be empty")
 	}
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	}
 
 	outPutDir := path.Join(cwd, "output")
@@ -32,25 +37,26 @@ func main() {
 
 	err = os.Chdir(outPutDir)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	npmInstallCmd := exec.Command("npm", "install")
 	output, err := npmInstallCmd.CombinedOutput()
 	if err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	}
 	println(string(output))
 
 	npmBuildCmd := exec.Command("npm", "run", "build")
 	output, err = npmBuildCmd.CombinedOutput()
 	if err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	}
 	println(string(output))
 
-	if err := initAWS(); err != nil {
-		panic(err.Error())
+	awsClient, err := cloud.GetAwsClient()
+	if err != nil {
+		log.Panic(err.Error())
 	}
 
 	var wg = &sync.WaitGroup{}
@@ -63,19 +69,19 @@ func main() {
 			return nil
 		}
 
-		wg.Add(1)
-		go func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			print("Uploading: ", path)
+		// wg.Add(1)
+		// go func(wg *sync.WaitGroup) {
+		// 	defer wg.Done()
+		print("Uploading: ", path)
 
-			relativePath := strings.ReplaceAll(path, distFolderPath, "")
-			objectKey := fmt.Sprintf("__outputs/%s%s", projectId, relativePath)
-			if err := awsClient.UploadFile(bucketName, objectKey, path); err != nil {
-				println(" ⚠️")
-				return
-			}
+		relativePath := strings.ReplaceAll(path, distFolderPath, "")
+		objectKey := fmt.Sprintf("__outputs/%s%s", projectId, relativePath)
+		if err := awsClient.UploadFile(bucketName, objectKey, path); err != nil {
+			println(" ⚠️")
+		} else {
 			println(" ✅")
-		}(wg)
+		}
+		// }(wg)
 		return nil
 	}
 	wg.Wait()

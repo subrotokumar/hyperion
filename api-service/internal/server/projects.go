@@ -4,13 +4,48 @@ import (
 	"encoding/json"
 	"hyperion/internal/aws"
 	db "hyperion/internal/db/sql"
+	"hyperion/internal/model"
 	"net/http"
-	"time"
+	"strconv"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func (s *Server) deploy(w http.ResponseWriter, r *http.Request) {
+func (s *Server) projectDetail(w http.ResponseWriter, r *http.Request) {
+	projectId, err := strconv.Atoi(chi.URLParam(r, "projectId"))
+	if err != nil {
+		s.ApiError(w, http.StatusBadRequest, "Bad Request")
+		return
+	}
+	projectDetail, err := s.store.GetProjectById(r.Context(), int64(projectId))
+	if err != nil {
+		s.ApiError(w, http.StatusNotFound, "Project not found")
+		return
+	}
+	deployment, err := s.store.GetDeploymentByProjectId(r.Context(), pgtype.Int8{
+		Int64: projectDetail.ID,
+		Valid: true,
+	})
+	if err != nil {
+		s.ApiError(w, http.StatusNotFound, "Project not found")
+		return
+	}
+
+	resp := model.ProjectDetailResponse{
+		Project:    projectDetail,
+		Deployment: deployment,
+	}
+	if jsonResp, err := json.Marshal(resp); err != nil {
+		s.ApiError(w, http.StatusInternalServerError, "Failed to parse json")
+		return
+	} else {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(jsonResp)
+	}
+}
+
+func (s *Server) deployProject(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		CreatedBy    pgtype.Int4 `json:"created_by"`
 		Name         string      `json:"name"`
@@ -45,7 +80,6 @@ func (s *Server) deploy(w http.ResponseWriter, r *http.Request) {
 		s.ApiError(w, http.StatusBadRequest, "Failed to mershal json response")
 		return
 	}
-	time.Sleep(time.Second * 1)
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(jsonResp)
 }

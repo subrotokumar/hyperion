@@ -28,3 +28,15 @@ func (q *Queries) CreateDeployment(ctx context.Context, arg CreateDeploymentPara
 	err := row.Scan(&i.ID, &i.ProjectID, &i.Status)
 	return i, err
 }
+
+const getDeploymentByProjectId = `-- name: GetDeploymentByProjectId :one
+SELECT id, project_id, status FROM "deployments"
+WHERE "project_id" = $1
+`
+
+func (q *Queries) GetDeploymentByProjectId(ctx context.Context, projectID pgtype.Int8) (Deployment, error) {
+	row := q.db.QueryRow(ctx, getDeploymentByProjectId, projectID)
+	var i Deployment
+	err := row.Scan(&i.ID, &i.ProjectID, &i.Status)
+	return i, err
+}

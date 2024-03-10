@@ -27,12 +27,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	//* Project
 	r.With(AuthMiddleware).Route("/project", func(r chi.Router) {
-		r.Get("/deploy", s.deploy)
-	})
-
-	//* Deplyments
-	r.Route("/project/deployments/", func(r chi.Router) {
-
+		r.Get("/{projectId}", s.projectDetail)
+		r.Post("", s.deployProject)
+		// r.Patch("", s.deploy)
+		// r.Delete("")
 	})
 
 	return r

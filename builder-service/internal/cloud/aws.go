@@ -1,4 +1,4 @@
-package main
+package cloud
 
 import (
 	"context"
@@ -8,34 +8,33 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/subrotokumar/builder-service/internal/utility"
 )
 
 type AWSClient struct {
 	S3Client *s3.Client
 }
 
-var awsClient *AWSClient
-
-func initAWS() error {
+func GetAwsClient() (*AWSClient, error) {
 	sdkConfig, err := config.LoadDefaultConfig(context.TODO())
 
 	if err != nil {
-		return fmt.Errorf("couldn't load default configuration. Have you set up your AWS account?")
+		return nil, fmt.Errorf("couldn't load default configuration. Have you set up your AWS account?")
 	}
 	s3Client := s3.NewFromConfig(sdkConfig)
-	awsClient = &AWSClient{
+	awsClient := &AWSClient{
 		S3Client: s3Client,
 	}
-	return nil
+	return awsClient, nil
 }
 
 func (awsClient AWSClient) UploadFile(bucketName string, objectKey string, fileName string) error {
 	file, err := os.Open(fileName)
 	if err != nil {
-		printf("Couldn't open file %v to upload. Here's why: %v\n", fileName, err)
+		fmt.Printf("Couldn't open file %v to upload. Here's why: %v\n", fileName, err)
 	} else {
 		defer file.Close()
-		contentType, err := GetFileContentType(file)
+		contentType, err := utility.GetFileContentType(file)
 		if err != nil {
 			println("Can't find context type")
 		}
@@ -46,7 +45,7 @@ func (awsClient AWSClient) UploadFile(bucketName string, objectKey string, fileN
 			ContentType: aws.String(contentType),
 		})
 		if err != nil {
-			printf("Couldn't upload file %v to %v:%v. Here's why: %v\n",
+			fmt.Printf("Couldn't upload file %v to %v:%v. Here's why: %v\n",
 				fileName, bucketName, objectKey, err)
 		}
 	}

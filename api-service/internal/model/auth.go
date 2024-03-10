@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	db "hyperion/internal/db/sql"
+	"time"
+)
 
 type TokenResponse struct {
 	RefreshToken Token `json:"refresh_token"`
@@ -10,4 +13,9 @@ type TokenResponse struct {
 type Token struct {
 	Token  string    `json:"token"`
 	Expiry time.Time `json:"expiry"`
+}
+
+type ProjectDetailResponse struct {
+	Project    db.Project    `json:"project"`
+	Deployment db.Deployment `json:"deployment"`
 }

@@ -21,12 +21,13 @@ func main() {
 	}
 
 	auth.NewAuth()
-	// runHttpServer()
-	runGrpcServer()
+	runHttpServer()
+	// runGrpcServer()
 }
 
 func runHttpServer() {
 	httpServer := server.NewServer()
+	fmt.Printf("Server started at http://localhost%s\n", httpServer.Addr)
 	err := httpServer.ListenAndServe()
 	if err != nil {
 		panic(fmt.Sprintf("cannot start server: %s", err))
